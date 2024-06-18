@@ -934,7 +934,7 @@ class HTTPClient
         ::Timeout.timeout(@receive_timeout, ReceiveTimeoutError) do
           begin
             @socket.readpartial(@read_block_size, buf)
-          rescue EOFError
+          rescue OpenSSL::SSL::SSLError, EOFError # 2024-06-18: Added OpenSSL::SSL::SSLError to handle OpenSSLv3 EOF exceptions
             buf = nil
             if @strict_response_size_check
               raise BadResponseError.new("EOF while reading chunked response")
